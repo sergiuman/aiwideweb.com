@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0f0f23">
+  <title>Momentum - Login</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="logo">⚡</div>
+      <h1>Momentum</h1>
+      <p class="subtitle">Your daily productivity companion</p>
+      
+      <div class="quote">
+        "You do not rise to the level of your goals. You fall to the level of your systems."
+        <span>— James Clear</span>
+      </div>
+      
+      <div id="error" class="error"></div>
+      
+      <form id="loginForm">
+        <input type="text" id="loginUser" placeholder="Username" required minlength="3">
+        <input type="password" id="loginPass" placeholder="Password" required minlength="6">
+        <button type="submit" class="btn primary">Sign In</button>
+      </form>
+      
+      <form id="registerForm" style="display:none">
+        <input type="text" id="regUser" placeholder="Choose username (min 3 chars)" required minlength="3">
+        <input type="password" id="regPass" placeholder="Choose password (min 6 chars)" required minlength="6">
+        <input type="password" id="regConfirm" placeholder="Confirm password" required minlength="6">
+        <button type="submit" class="btn primary">Create Account</button>
+      </form>
+      
+      <p class="toggle">
+        <span id="showRegister">Don't have an account? <a href="#">Create one</a></span>
+        <span id="showLogin" style="display:none">Already have an account? <a href="#">Sign in</a></span>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    const $ = id => document.getElementById(id);
+    const error = msg => { $('error').textContent = msg; $('error').style.display = msg ? 'block' : 'none'; };
+
+    // Check if already logged in
+    fetch('api.php?action=me')
+      .then(r => r.json())
+      .then(d => { if (d.authenticated) window.location.href = 'app.php'; })
+      .catch(() => {});
+
+    // Toggle forms
+    $('showRegister').onclick = e => {
+      e.preventDefault();
+      $('loginForm').style.display = 'none';
+      $('registerForm').style.display = 'block';
+      $('showRegister').style.display = 'none';
+      $('showLogin').style.display = 'block';
+      error('');
+    };
+    
+    $('showLogin').onclick = e => {
+      e.preventDefault();
+      $('registerForm').style.display = 'none';
+      $('loginForm').style.display = 'block';
+      $('showLogin').style.display = 'none';
+      $('showRegister').style.display = 'block';
+      error('');
+    };
+
+    // Login
+    $('loginForm').onsubmit = async e => {
+      e.preventDefault();
+      error('');
+      
+      try {
+        const res = await fetch('api.php?action=login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: $('loginUser').value,
+            password: $('loginPass').value
+          })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          window.location.href = 'app.php';
+        } else {
+          error(data.error || 'Login failed');
+        }
+      } catch (err) {
+        error('Connection error. Please try again.');
+      }
+    };
+
+    // Register
+    $('registerForm').onsubmit = async e => {
+      e.preventDefault();
+      error('');
+      
+      if ($('regPass').value !== $('regConfirm').value) {
+        return error('Passwords do not match');
+      }
+      
+      try {
+        const res = await fetch('api.php?action=register', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            username: $('regUser').value,
+            password: $('regPass').value
+          })
+        });
+        const data = await res.json();
+        
+        if (data.success) {
+          window.location.href = 'app.php';
+        } else {
+          error(data.error || 'Registration failed');
+        }
+      } catch (err) {
+        error('Connection error. Please try again.');
+      }
+    };
+  </script>
+</body>
+</html>
