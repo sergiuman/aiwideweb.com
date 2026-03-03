@@ -2,6 +2,9 @@
 session_start();
 header('Content-Type: application/json');
 
+$config = file_exists(__DIR__ . '/config.php') ? require __DIR__ . '/config.php' : [];
+$OPENAI_API_KEY = $config['OPENAI_API_KEY'] ?? '';
+
 // Database setup
 $dbFile = __DIR__ . '/data/momentum.db';
 $dbDir = __DIR__ . '/data';
@@ -306,6 +309,103 @@ switch ($action) {
         response($entry);
         break;
     
+    // ============ AI JOURNALLING ============
+    
+    case 'transcribe':
+        $userId = requireAuth();
+        
+        if ($method !== 'POST') response(['error' => 'Method not allowed']);
+        if (empty($OPENAI_API_KEY) || $OPENAI_API_KEY === 'your-api-key-here') {
+            response(['error' => 'Please set OPENAI_API_KEY in config.php']);
+        }
+        
+        if (!isset($_FILES['audio'])) {
+            response(['error' => 'No audio file provided']);
+        }
+        
+        $audioPath = $_FILES['audio']['tmp_name'];
+        $audioName = $_FILES['audio']['name'] ?: 'audio.webm';
+        
+        // 1. Transcribe with Whisper
+        $cfile = new CURLFile($audioPath, mime_content_type($audioPath), $audioName);
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, 'https://api.openai.com/v1/audio/transcriptions');
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $OPENAI_API_KEY
+        ]);
+        curl_setopt($ch, CURLOPT_POST, true);
+        curl_setopt($ch, CURLOPT_POSTFIELDS, [
+            'file' => $cfile,
+            'model' => 'whisper-1'
+        ]);
+        
+        $result = curl_exec($ch);
+        curl_close($ch);
+        
+        $whisperData = json_decode($result, true);
+        if (isset($whisperData['error'])) {
+            response(['error' => 'Whisper API Error: ' . $whisperData['error']['message']]);
+        }
+        
+        $transcript = $whisperData['text'] ?? '';
+        if (empty($transcript)) {
+            response(['error' => 'Could not transcribe audio']);
+        }
+        
+        // 2. Extract Data with GPT-4o-mini
+        $prompt = "You are an AI assistant for a daily journaling app. Read the user's transcript of their day.
+Extract the following JSON structure exactly. Do not output anything else.
+Fields:
+- `sleep` (1-10 integer based on their sleep quality mentioned, or 5 if not mentioned)
+- `energy` (1-10 integer based on their energy level, or 5 if not mentioned)
+- `mood` (string, one of: 'great', 'good', 'neutral', 'low', 'struggling')
+- `food` (1-10 integer representing how healthy they ate, or 5 if not mentioned)
+- `movement` (0-4 integer: 0=Sedentary, 1=Light, 2=Moderate, 3=Active, 4=Intense)
+- `decisions` (0-3 integer: 0=Light, 1=Normal, 2=Heavy, 3=Exhausting)
+- `reflection_practical` (string, a short summary of what they actually did)
+- `reflection_emotional` (string, a short summary of how they felt)
+- `reflection_identity` (string, a short note on who they were today)
+- `wins` (string, their best achievement of the day)
+- `challenges` (string, any main challenge)
+- `gratitude` (string, what they mentioned being grateful for, or empty)
+
+Transcript: \"$transcript\"";
+
+        $ch2 = curl_init();
+        curl_setopt($ch2, CURLOPT_URL, 'https://api.openai.com/v1/chat/completions');
+        curl_setopt($ch2, CURLOPT_RETURNTRANSFER, true);
+        curl_setopt($ch2, CURLOPT_HTTPHEADER, [
+            'Authorization: Bearer ' . $OPENAI_API_KEY,
+            'Content-Type: application/json'
+        ]);
+        curl_setopt($ch2, CURLOPT_POST, true);
+        curl_setopt($ch2, CURLOPT_POSTFIELDS, json_encode([
+            'model' => 'gpt-4o-mini',
+            'messages' => [
+                ['role' => 'system', 'content' => $prompt]
+            ],
+            'response_format' => ['type' => 'json_object']
+        ]));
+        
+        $result2 = curl_exec($ch2);
+        curl_close($ch2);
+        
+        $gptData = json_decode($result2, true);
+        if (isset($gptData['error'])) {
+            response(['error' => 'GPT API Error: ' . $gptData['error']['message']]);
+        }
+        
+        $extractedJsonStr = $gptData['choices'][0]['message']['content'] ?? '{}';
+        $extractedData = json_decode($extractedJsonStr, true);
+        
+        response([
+            'success' => true,
+            'transcript' => $transcript,
+            'extracted' => $extractedData
+        ]);
+        break;
+
     // ============ HABITS ============
     
     case 'planned':

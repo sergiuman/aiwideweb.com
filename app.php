@@ -58,16 +58,33 @@ if (!isset($_SESSION['user_id'])) {
 
       <!-- Track -->
       <div id="track" class="view">
-        <div class="header"><h2>Quick Daily Check-in</h2><p>15-25 taps to capture your day</p></div>
-        <div class="section"><label>😴 How did you sleep? <span id="sleepVal" class="value">5/10</span></label><input type="range" id="sleepSlider" min="1" max="10" value="5"><div class="slider-labels"><span>Terrible</span><span>Great</span></div></div>
-        <div class="section"><label>⚡ Energy level? <span id="energyVal" class="value">5/10</span></label><input type="range" id="energySlider" min="1" max="10" value="5"><div class="slider-labels"><span>Exhausted</span><span>Energized</span></div></div>
-        <div class="section"><label>🎭 How are you feeling?</label><div id="moodGrid" class="moods"></div></div>
-        <div class="section"><label>🍽️ Nutrition <span id="foodVal" class="value">5/10</span></label><input type="range" id="foodSlider" min="1" max="10" value="5"><div class="slider-labels"><span>Poor</span><span>Nourishing</span></div></div>
-        <div class="section"><label>🏃 Physical activity</label><div id="movementOpts" class="options"></div></div>
-        <div class="section"><label>🧠 Decision load</label><div id="decisionOpts" class="options"></div></div>
-        <div class="section"><label>✓ Habits (<span id="habitCount">0</span>)</label><div id="habitsGrid" class="habits"></div></div>
-        <button id="saveTrack" class="btn primary">Save Check-in</button>
-        <p id="trackNote" class="note">Tap to save</p>
+        <div class="header">
+          <h2>Voice Journal</h2>
+          <p>Record a 5-minute brain dump of your day</p>
+        </div>
+        
+        <div id="voiceRecorder" class="voice-recorder">
+          <button id="micBtn" class="mic-btn">🎙️</button>
+          <p id="recStatus" class="rec-status">Tap to start recording</p>
+          <div id="recTimer" class="rec-timer" style="display:none">0:00</div>
+        </div>
+        
+        <div id="aiProcessing" class="ai-processing" style="display:none">
+          <div class="spinner"></div>
+          <p>AI is analyzing your day...</p>
+        </div>
+
+        <div id="aiResult" class="ai-result" style="display:none">
+          <h3>Transcribed:</h3>
+          <p id="transcriptText" class="transcript-text"></p>
+          
+          <h3>Extracted Data:</h3>
+          <div id="extractedDataPre" class="extracted-data"></div>
+          
+          <button id="saveAiData" class="btn primary" style="margin-bottom: 8px;">Looks Good, Save It!</button>
+          <button id="discardAiData" class="btn secondary">Discard</button>
+        </div>
+        <p id="trackNote" class="note"></p>
       </div>
 
       <!-- Reflect -->

@@ -1,0 +1,9 @@
+# Ignore configuration files with API keys
+config.php
+
+# Ignore database and user data
+data/
+Data/
+
+# Ignore OS files
+.DS_Store

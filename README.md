@@ -2,21 +2,23 @@
 
 A productivity tracking app with user authentication, designed for shared PHP hosting.
 
-## Features
+## Capabilities & Features
 
-- 🔐 User registration & login (password hashed with bcrypt)
-- 📊 Daily check-ins (sleep, energy, mood, nutrition, movement)
-- ✓ Habit tracking (12 pre-defined habits)
-- 💭 Evening reflections
-- 🎯 Tomorrow planning
-- 📅 Personal history
-- ⏱️ Focus timer
-- 🔥 Streak tracking
+- 🎙️ **5-Minute Voice Journaling**: Speak freely about your day and let AI analyze it!
+- 🧠 **AI-Powered Data Extraction**: Automatically extracts daily metrics like sleep quality, energy levels, and mood from your voice transcript (Powered by OpenAI Whisper & GPT-4o-mini).
+- 🔐 **User Registration & Login**: Secure user accounts (password hashed with bcrypt).
+- 📊 **Daily Dashboard**: Visualize your habits, energy, and sleep metrics over time.
+- ✓ **Habit Tracking**: Define and track 12 core daily habits (e.g. Exercise, Deep Work, Reading).
+- 🎯 **Tomorrow Planning**: Select up to 5 habits to focus on for the next day.
+- 📅 **Personal History**: Look back at past days, complete with AI reflection summaries.
+- ⏱️ **Focus Timer**: Built-in Pomodoro-style timer to stay on track.
+- 🔥 **Streak Tracking**: Keep your momentum going with continuous daily check-ins.
 
 ## Requirements
 
-- PHP 7.4+ with PDO SQLite extension (standard on most hosts)
+- PHP 7.4+ with PDO SQLite extension and `curl` enabled (standard on most hosts)
 - No MySQL needed - uses SQLite file database
+- **OpenAI API Key**: Required for the Voice Journaling functionality (Whisper & GPT algorithms).
 
 ## Files
 
@@ -63,7 +65,12 @@ The `data` folder will be created automatically, but you may need to ensure the 
 
 ## How It Works
 
-- **Database**: SQLite stores everything in `data/momentum.db`
+- **Microphone Capture**: The browser's native `MediaRecorder` API captures your voice in the frontend and sends the audio payload to the backend API.
+- **AI Processing Pipeline**: 
+  1. The PHP backend receives the audio and securely passes it to **OpenAI's Whisper API**.
+  2. The raw text transcription is then forwarded to **GPT-4o-mini**.
+  3. The LLM extracts the unstructured journal text into a strict JSON schema representing your daily metrics and habits.
+- **Database**: SQLite stores the extracted user metrics, reflections, and habits in `data/momentum.db`
 - **Sessions**: PHP sessions handle authentication
 - **Security**: Passwords hashed with `password_hash()` (bcrypt)
 - **Data**: Each user's entries are separate and private

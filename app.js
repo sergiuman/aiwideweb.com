@@ -113,53 +113,110 @@ function setupUI() {
   
   $('timerSelect').onchange = e => $('timerLabel').textContent = e.target.value;
 
-  // Track sliders
-  $('sleepSlider').oninput = e => { state.today.sleep = +e.target.value; $('sleepVal').textContent = e.target.value + '/10'; };
-  $('energySlider').oninput = e => { state.today.energy = +e.target.value; $('energyVal').textContent = e.target.value + '/10'; };
-  $('foodSlider').oninput = e => { state.today.food = +e.target.value; $('foodVal').textContent = e.target.value + '/10'; };
-
-  // Moods
-  $('moodGrid').innerHTML = MOODS.map(m => '<button data-mood="' + m.id + '"><span class="emoji">' + m.emoji + '</span><span>' + m.label + '</span></button>').join('');
-  $$('#moodGrid button').forEach(b => {
-    b.onclick = () => {
-      $$('#moodGrid button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      state.today.mood = b.dataset.mood;
-    };
-  });
-
-  // Movement
-  $('movementOpts').innerHTML = MOVEMENTS.map((m, i) => '<button data-val="' + (i + 1) + '">' + m + '</button>').join('');
-  $$('#movementOpts button').forEach(b => {
-    b.onclick = () => {
-      $$('#movementOpts button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      state.today.movement = +b.dataset.val;
-    };
-  });
-
-  // Decisions
-  $('decisionOpts').innerHTML = DECISIONS.map((d, i) => '<button data-val="' + (i + 1) + '">' + d + '</button>').join('');
-  $$('#decisionOpts button').forEach(b => {
-    b.onclick = () => {
-      $$('#decisionOpts button').forEach(x => x.classList.remove('active'));
-      b.classList.add('active');
-      state.today.decisions = +b.dataset.val;
-    };
-  });
-
-  // Habits
-  $('habitsGrid').innerHTML = HABITS.map(h => '<button data-id="' + h.id + '"><span class="icon">' + h.icon + '</span><span class="name">' + h.name + '</span><span class="check">✓</span></button>').join('');
-  $$('#habitsGrid button').forEach(b => {
-    b.onclick = () => {
-      if (!state.today.habits) state.today.habits = [];
-      const i = state.today.habits.indexOf(b.dataset.id);
-      if (i === -1) state.today.habits.push(b.dataset.id);
-      else state.today.habits.splice(i, 1);
-      b.classList.toggle('active', state.today.habits.includes(b.dataset.id));
-      $('habitCount').textContent = state.today.habits.length;
-    };
-  });
+  // Voice Recording
+  let mediaRecorder = null;
+  let audioChunks = [];
+  let recTimerInt = null;
+  let recSeconds = 0;
+  
+  $('micBtn').onclick = async () => {
+    if (mediaRecorder && mediaRecorder.state === 'recording') {
+      mediaRecorder.stop();
+      return;
+    }
+    
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream);
+      audioChunks = [];
+      
+      mediaRecorder.ondataavailable = e => {
+        if (e.data.size > 0) audioChunks.push(e.data);
+      };
+      
+      mediaRecorder.onstop = async () => {
+        stream.getTracks().forEach(track => track.stop());
+        $('micBtn').classList.remove('recording');
+        $('recStatus').textContent = 'Processing audio...';
+        clearInterval(recTimerInt);
+        $('recTimer').style.display = 'none';
+        $('aiProcessing').style.display = 'block';
+        $('voiceRecorder').style.display = 'none';
+        
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
+        const formData = new FormData();
+        formData.append('audio', audioBlob, 'journal.webm');
+        
+        try {
+          const res = await fetch('api.php?action=transcribe', {
+            method: 'POST',
+            body: formData
+          });
+          const data = await res.json();
+          $('aiProcessing').style.display = 'none';
+          
+          if (data.success) {
+            $('aiResult').style.display = 'block';
+            $('transcriptText').textContent = '"' + data.transcript + '"';
+            
+            state.tempAiData = data.extracted;
+            
+            let html = `<strong>Energy:</strong> ${data.extracted.energy}/10 &bull; <strong>Mood:</strong> ${data.extracted.mood}<br>`;
+            html += `<strong>Sleep:</strong> ${data.extracted.sleep}/10 &bull; <strong>Food:</strong> ${data.extracted.food}/10<br><br>`;
+            html += `<strong>Summary:</strong> ${data.extracted.reflection_practical || 'None'}<br>`;
+            html += `<strong>Wins:</strong> ${data.extracted.wins || 'None'}`;
+            $('extractedDataPre').innerHTML = html;
+            
+          } else {
+            alert('Error: ' + data.error);
+            $('voiceRecorder').style.display = 'block';
+            $('recStatus').textContent = 'Tap to start recording';
+          }
+        } catch (err) {
+          $('aiProcessing').style.display = 'none';
+          $('voiceRecorder').style.display = 'block';
+          alert('Failed to connect to server.');
+          $('recStatus').textContent = 'Tap to start recording';
+        }
+      };
+      
+      mediaRecorder.start();
+      $('micBtn').classList.add('recording');
+      $('recStatus').textContent = 'Recording... Tap to stop';
+      
+      recSeconds = 0;
+      $('recTimer').style.display = 'block';
+      $('recTimer').textContent = '0:00';
+      recTimerInt = setInterval(() => {
+        recSeconds++;
+        $('recTimer').textContent = fmtTime(recSeconds);
+        if (recSeconds >= 300) { // 5 min max
+          mediaRecorder.stop();
+        }
+      }, 1000);
+      
+    } catch (err) {
+      alert('Microphone access denied or not available.');
+    }
+  };
+  
+  $('saveAiData').onclick = async () => {
+    $('saveAiData').textContent = 'Saving...';
+    // Merge into state.today
+    Object.assign(state.today, state.tempAiData);
+    await saveEntry();
+    $('saveAiData').textContent = 'Looks Good, Save It!';
+    $('aiResult').style.display = 'none';
+    $('voiceRecorder').style.display = 'block';
+    $('recStatus').textContent = 'Saved! Tap to record again';
+  };
+  
+  $('discardAiData').onclick = () => {
+    state.tempAiData = null;
+    $('aiResult').style.display = 'none';
+    $('voiceRecorder').style.display = 'block';
+    $('recStatus').textContent = 'Tap to start recording';
+  };
 
   // Reflect inputs
   $('rPractical').oninput = e => state.today.reflection_practical = e.target.value;
@@ -189,7 +246,6 @@ function setupUI() {
   });
 
   // Save buttons
-  $('saveTrack').onclick = saveEntry;
   $('saveReflect').onclick = saveEntry;
   $('savePlan').onclick = async () => {
     await api('planned', 'POST', { habits: state.planned });
@@ -323,24 +379,10 @@ function renderDashboard() {
 
 function renderTrack() {
   const t = state.today || {};
-  $('sleepSlider').value = t.sleep || 5;
-  $('sleepVal').textContent = (t.sleep || 5) + '/10';
-  $('energySlider').value = t.energy || 5;
-  $('energyVal').textContent = (t.energy || 5) + '/10';
-  $('foodSlider').value = t.food || 5;
-  $('foodVal').textContent = (t.food || 5) + '/10';
-  
-  $$('#moodGrid button').forEach(b => b.classList.toggle('active', b.dataset.mood === t.mood));
-  $$('#movementOpts button').forEach(b => b.classList.toggle('active', +b.dataset.val === t.movement));
-  $$('#decisionOpts button').forEach(b => b.classList.toggle('active', +b.dataset.val === t.decisions));
-  
-  const habits = t.habits || [];
-  $$('#habitsGrid button').forEach(b => b.classList.toggle('active', habits.includes(b.dataset.id)));
-  $('habitCount').textContent = habits.length;
-  
   if (t.completed) {
-    $('saveTrack').textContent = '✓ Saved';
-    $('trackNote').textContent = 'Progress saved!';
+    if ($('recStatus')) $('recStatus').textContent = 'Already tracked today! Tap to update via voice.';
+  } else {
+    if ($('recStatus')) $('recStatus').textContent = 'Tap to start recording';
   }
 }
 
