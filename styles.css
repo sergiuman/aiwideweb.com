@@ -264,8 +264,7 @@ button {
     font-size: 28px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+    color: var(--text-main);
 }
 
 .timer-bar .controls {
@@ -513,7 +512,7 @@ main {
     font-size: 20px;
     font-weight: 700;
     display: block;
-    color: #fff;
+    color: var(--text-main);
 }
 
 .stat .label {
@@ -1064,7 +1063,7 @@ input[type="range"]::-webkit-slider-thumb:active {
     border: none;
     cursor: pointer;
     text-align: left;
-    color: #fff;
+    color: var(--text-main);
     transition: background 0.2s;
 }
 
@@ -1262,8 +1261,7 @@ input[type="range"]::-webkit-slider-thumb:active {
     font-size: 32px;
     font-weight: 700;
     font-variant-numeric: tabular-nums;
-    color: #fff;
-    text-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
+    color: var(--text-main);
 }
 
 .ai-processing {
@@ -1327,7 +1325,7 @@ input[type="range"]::-webkit-slider-thumb:active {
 .extracted-data {
     font-size: 14px;
     line-height: 1.6;
-    color: #fff;
+    color: var(--text-main);
     background: rgba(139, 92, 246, 0.1);
     padding: 20px;
     border-radius: 12px;
@@ -1335,4 +1333,63 @@ input[type="range"]::-webkit-slider-thumb:active {
     border: 1px solid rgba(139, 92, 246, 0.2);
     font-family: inherit;
     white-space: pre-wrap;
+}
+
+/* Light Theme Overrides */
+body.light-theme {
+    --bg-main: #f9fafb;
+    --bg-card: rgba(255, 255, 255, 0.7);
+    --bg-card-hover: rgba(255, 255, 255, 1);
+    --border-soft: rgba(0, 0, 0, 0.08);
+
+    --accent-primary: #6366f1;
+    --accent-secondary: #ec4899;
+    --accent-gradient: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+
+    --text-main: #111827;
+    --text-muted: #6b7280;
+}
+
+body.light-theme .app {
+    background-image: radial-gradient(circle at top right, rgba(236, 72, 153, 0.08), transparent 40%),
+        radial-gradient(circle at bottom left, rgba(99, 102, 241, 0.08), transparent 40%);
+}
+
+body.light-theme .timer-bar {
+    background: rgba(249, 250, 251, 0.85);
+}
+
+body.light-theme nav {
+    background: rgba(249, 250, 251, 0.9);
+}
+
+body.light-theme .card h3,
+body.light-theme .section>label,
+body.light-theme .dash-header h1 {
+    color: var(--text-main);
+}
+
+body.light-theme input,
+body.light-theme textarea,
+body.light-theme select {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+body.light-theme .btn.primary {
+    color: #fff;
+    box-shadow: 0 8px 15px -4px rgba(99, 102, 241, 0.3);
+}
+
+body.light-theme .history-card .details .text,
+body.light-theme .history-card .row {
+    color: var(--text-main);
+}
+
+body.light-theme .wisdom p {
+    color: var(--text-main);
+    font-weight: 500;
+}
+
+body.light-theme .mic-btn {
+    box-shadow: 0 10px 30px rgba(99, 102, 241, 0.3);
 }

@@ -1,40 +1,164 @@
-[Wed Mar  4 23:14:25 2026] PHP 8.5.3 Development Server (http://localhost:8000) started
-[Wed Mar  4 23:14:32 2026] [::1]:54171 Accepted
-[Wed Mar  4 23:14:32 2026] [::1]:54171 [200]: GET /
-[Wed Mar  4 23:14:32 2026] [::1]:54171 Closing
-[Wed Mar  4 23:26:54 2026] [::1]:54300 Accepted
-[Wed Mar  4 23:26:54 2026] [::1]:54300 [200]: GET /
-[Wed Mar  4 23:26:54 2026] [::1]:54300 Closing
-[Wed Mar  4 23:26:55 2026] [::1]:54301 Accepted
-[Wed Mar  4 23:26:55 2026] [::1]:54301 [200]: GET /styles.css
-[Wed Mar  4 23:26:55 2026] [::1]:54301 Closing
-[Wed Mar  4 23:26:55 2026] [::1]:54302 Accepted
-[Wed Mar  4 23:26:55 2026] [::1]:54302 [200]: GET /api.php?action=me
-[Wed Mar  4 23:26:55 2026] [::1]:54302 Closing
-[Wed Mar  4 23:26:55 2026] [::1]:54303 Accepted
-[Wed Mar  4 23:26:55 2026] [::1]:54303 [200]: GET /favicon.ico
-[Wed Mar  4 23:26:55 2026] [::1]:54303 Closing
-[Wed Mar  4 23:27:07 2026] [::1]:54304 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54304 [200]: POST /api.php?action=login
-[Wed Mar  4 23:27:08 2026] [::1]:54304 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54305 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54305 [200]: GET /app.php
-[Wed Mar  4 23:27:08 2026] [::1]:54305 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54306 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54306 [200]: GET /styles.css
-[Wed Mar  4 23:27:08 2026] [::1]:54306 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54307 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54307 [200]: GET /app.js
-[Wed Mar  4 23:27:08 2026] [::1]:54307 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54308 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54308 [200]: GET /api.php?action=me
-[Wed Mar  4 23:27:08 2026] [::1]:54308 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54309 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54309 [200]: GET /api.php?action=today
-[Wed Mar  4 23:27:08 2026] [::1]:54309 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54310 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54310 [200]: GET /api.php?action=entries
-[Wed Mar  4 23:27:08 2026] [::1]:54310 Closing
-[Wed Mar  4 23:27:08 2026] [::1]:54311 Accepted
-[Wed Mar  4 23:27:08 2026] [::1]:54311 [200]: GET /api.php?action=planned
-[Wed Mar  4 23:27:08 2026] [::1]:54311 Closing
+[Thu Mar  5 23:55:54 2026] PHP 8.5.3 Development Server (http://localhost:8000) started
+[Thu Mar  5 23:56:13 2026] [::1]:50223 Accepted
+[Thu Mar  5 23:56:14 2026] [::1]:50223 [200]: GET /
+[Thu Mar  5 23:56:14 2026] [::1]:50223 Closing
+[Thu Mar  5 23:56:14 2026] [::1]:50224 Accepted
+[Thu Mar  5 23:56:14 2026] [::1]:50224 [200]: GET /manifest.json
+[Thu Mar  5 23:56:14 2026] [::1]:50224 Closing
+[Thu Mar  5 23:56:14 2026] [::1]:50225 Accepted
+[Thu Mar  5 23:56:14 2026] [::1]:50225 [200]: GET /styles.css
+[Thu Mar  5 23:56:14 2026] [::1]:50225 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50226 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50226 [200]: GET /api.php?action=me
+[Thu Mar  5 23:56:15 2026] [::1]:50226 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50227 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50227 [200]: GET /sw.js
+[Thu Mar  5 23:56:15 2026] [::1]:50227 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50228 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50228 [200]: GET /
+[Thu Mar  5 23:56:15 2026] [::1]:50228 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50229 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50230 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50231 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50232 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50233 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50229 [200]: GET /index.html
+[Thu Mar  5 23:56:15 2026] [::1]:50229 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50234 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50230 [302]: GET /app.php
+[Thu Mar  5 23:56:15 2026] [::1]:50230 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50231 [200]: GET /app.js
+[Thu Mar  5 23:56:15 2026] [::1]:50232 [200]: GET /styles.css
+[Thu Mar  5 23:56:15 2026] [::1]:50233 [200]: GET /manifest.json
+[Thu Mar  5 23:56:15 2026] [::1]:50235 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50234 [200]: GET /assets/icon-192.png
+[Thu Mar  5 23:56:15 2026] [::1]:50231 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50232 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50233 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50235 [200]: GET /assets/icon-512.png
+[Thu Mar  5 23:56:15 2026] [::1]:50234 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50235 Closing
+[Thu Mar  5 23:56:15 2026] [::1]:50236 Accepted
+[Thu Mar  5 23:56:15 2026] [::1]:50236 [200]: GET /index.html
+[Thu Mar  5 23:56:15 2026] [::1]:50236 Closing
+[Thu Mar  5 23:56:22 2026] [::1]:50237 Accepted
+[Thu Mar  5 23:56:22 2026] [::1]:50237 [200]: POST /api.php?action=login
+[Thu Mar  5 23:56:22 2026] [::1]:50237 Closing
+[Thu Mar  5 23:56:25 2026] [::1]:50238 Accepted
+[Thu Mar  5 23:56:25 2026] [::1]:50238 [200]: POST /api.php?action=login
+[Thu Mar  5 23:56:25 2026] [::1]:50238 Closing
+[Thu Mar  5 23:56:26 2026] [::1]:50239 Accepted
+[Thu Mar  5 23:56:26 2026] [::1]:50239 [200]: GET /sw.js
+[Thu Mar  5 23:56:26 2026] [::1]:50239 Closing
+[Thu Mar  5 23:56:31 2026] [::1]:50241 Accepted
+[Thu Mar  5 23:56:31 2026] [::1]:50241 [200]: GET /api.php?action=me
+[Thu Mar  5 23:56:31 2026] [::1]:50241 Closing
+[Thu Mar  5 23:56:32 2026] [::1]:50242 Accepted
+[Thu Mar  5 23:56:32 2026] [::1]:50242 [200]: GET /sw.js
+[Thu Mar  5 23:56:32 2026] [::1]:50242 Closing
+[Thu Mar  5 23:56:55 2026] [::1]:50243 Accepted
+[Thu Mar  5 23:56:55 2026] [::1]:50243 [200]: POST /api.php?action=login
+[Thu Mar  5 23:56:55 2026] [::1]:50243 Closing
+[Thu Mar  5 23:56:56 2026] [::1]:50244 Accepted
+[Thu Mar  5 23:56:56 2026] [::1]:50244 [200]: GET /sw.js
+[Thu Mar  5 23:56:56 2026] [::1]:50244 Closing
+[Thu Mar  5 23:57:00 2026] [::1]:50245 Accepted
+[Thu Mar  5 23:57:00 2026] [::1]:50245 [200]: GET /api.php?action=me
+[Thu Mar  5 23:57:00 2026] [::1]:50245 Closing
+[Thu Mar  5 23:57:00 2026] [::1]:50246 Accepted
+[Thu Mar  5 23:57:00 2026] [::1]:50246 [200]: GET /assets/icon-192.png
+[Thu Mar  5 23:57:00 2026] [::1]:50246 Closing
+[Thu Mar  5 23:57:01 2026] [::1]:50247 Accepted
+[Thu Mar  5 23:57:01 2026] [::1]:50247 [200]: GET /sw.js
+[Thu Mar  5 23:57:01 2026] [::1]:50247 Closing
+[Thu Mar  5 23:57:07 2026] [::1]:50252 Accepted
+[Thu Mar  5 23:57:07 2026] [::1]:50252 [200]: GET /api.php?action=me
+[Thu Mar  5 23:57:07 2026] [::1]:50252 Closing
+[Thu Mar  5 23:57:08 2026] [::1]:50253 Accepted
+[Thu Mar  5 23:57:08 2026] [::1]:50253 [200]: GET /sw.js
+[Thu Mar  5 23:57:08 2026] [::1]:50253 Closing
+[Fri Mar  6 00:00:12 2026] [::1]:50287 Accepted
+[Fri Mar  6 00:00:12 2026] [::1]:50287 [200]: POST /api.php?action=login
+[Fri Mar  6 00:00:12 2026] [::1]:50287 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50288 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50288 [200]: GET /sw.js
+[Fri Mar  6 00:00:13 2026] [::1]:50288 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50289 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50289 [200]: GET /index.html
+[Fri Mar  6 00:00:13 2026] [::1]:50289 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50290 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50291 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50292 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50293 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50294 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50290 [200]: GET /
+[Fri Mar  6 00:00:13 2026] [::1]:50290 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50295 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50291 [200]: GET /app.php
+[Fri Mar  6 00:00:13 2026] [::1]:50291 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50292 [200]: GET /app.js
+[Fri Mar  6 00:00:13 2026] [::1]:50293 [200]: GET /styles.css
+[Fri Mar  6 00:00:13 2026] [::1]:50292 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50294 [200]: GET /manifest.json
+[Fri Mar  6 00:00:13 2026] [::1]:50293 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50294 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50296 Accepted
+[Fri Mar  6 00:00:13 2026] [::1]:50295 [200]: GET /assets/icon-192.png
+[Fri Mar  6 00:00:13 2026] [::1]:50295 Closing
+[Fri Mar  6 00:00:13 2026] [::1]:50296 [200]: GET /assets/icon-512.png
+[Fri Mar  6 00:00:13 2026] [::1]:50296 Closing
+[Fri Mar  6 00:00:15 2026] [::1]:50297 Accepted
+[Fri Mar  6 00:00:15 2026] [::1]:50297 [200]: GET /api.php?action=me
+[Fri Mar  6 00:00:15 2026] [::1]:50297 Closing
+[Fri Mar  6 00:00:15 2026] [::1]:50298 Accepted
+[Fri Mar  6 00:00:15 2026] [::1]:50298 [200]: GET /api.php?action=me
+[Fri Mar  6 00:00:15 2026] [::1]:50298 Closing
+[Fri Mar  6 00:00:15 2026] [::1]:50299 Accepted
+[Fri Mar  6 00:00:15 2026] [::1]:50299 [200]: GET /api.php?action=today
+[Fri Mar  6 00:00:15 2026] [::1]:50299 Closing
+[Fri Mar  6 00:00:15 2026] [::1]:50300 Accepted
+[Fri Mar  6 00:00:15 2026] [::1]:50300 [200]: GET /api.php?action=entries
+[Fri Mar  6 00:00:15 2026] [::1]:50300 Closing
+[Fri Mar  6 00:00:15 2026] [::1]:50301 Accepted
+[Fri Mar  6 00:00:15 2026] [::1]:50301 [200]: GET /api.php?action=planned
+[Fri Mar  6 00:00:15 2026] [::1]:50301 Closing
+[Fri Mar  6 00:00:16 2026] [::1]:50302 Accepted
+[Fri Mar  6 00:00:16 2026] [::1]:50302 [200]: GET /sw.js
+[Fri Mar  6 00:00:16 2026] [::1]:50302 Closing
+[Fri Mar  6 00:00:44 2026] [::1]:50308 Accepted
+[Fri Mar  6 00:00:44 2026] [::1]:50308 [200]: POST /api.php?action=login
+[Fri Mar  6 00:00:44 2026] [::1]:50308 Closing
+[Fri Mar  6 00:00:44 2026] [::1]:50309 Accepted
+[Fri Mar  6 00:00:44 2026] [::1]:50309 [200]: GET /api.php?action=me
+[Fri Mar  6 00:00:44 2026] [::1]:50309 Closing
+[Fri Mar  6 00:00:44 2026] [::1]:50310 Accepted
+[Fri Mar  6 00:00:44 2026] [::1]:50310 [200]: GET /api.php?action=today
+[Fri Mar  6 00:00:44 2026] [::1]:50310 Closing
+[Fri Mar  6 00:00:44 2026] [::1]:50311 Accepted
+[Fri Mar  6 00:00:44 2026] [::1]:50311 [200]: GET /api.php?action=entries
+[Fri Mar  6 00:00:44 2026] [::1]:50311 Closing
+[Fri Mar  6 00:00:44 2026] [::1]:50312 Accepted
+[Fri Mar  6 00:00:44 2026] [::1]:50312 [200]: GET /api.php?action=planned
+[Fri Mar  6 00:00:44 2026] [::1]:50312 Closing
+[Fri Mar  6 00:00:45 2026] [::1]:50313 Accepted
+[Fri Mar  6 00:00:45 2026] [::1]:50313 [200]: GET /sw.js
+[Fri Mar  6 00:00:45 2026] [::1]:50313 Closing
+[Fri Mar  6 00:01:31 2026] [::1]:50317 Accepted
+[Fri Mar  6 00:01:31 2026] [::1]:50317 [200]: POST /api.php?action=save-entry
+[Fri Mar  6 00:01:31 2026] [::1]:50317 Closing
+[Fri Mar  6 00:01:31 2026] [::1]:50318 Accepted
+[Fri Mar  6 00:01:31 2026] [::1]:50318 [200]: GET /api.php?action=entries
+[Fri Mar  6 00:01:31 2026] [::1]:50318 Closing
+[Fri Mar  6 00:01:31 2026] [::1]:50319 Accepted
+[Fri Mar  6 00:01:31 2026] [::1]:50319 [200]: GET /api.php?action=me
+[Fri Mar  6 00:01:31 2026] [::1]:50319 Closing
+[Fri Mar  6 01:08:53 2026] [::1]:51067 Accepted
+[Fri Mar  6 01:08:53 2026] [::1]:51067 [200]: POST /api.php?action=register
+[Fri Mar  6 01:08:53 2026] [::1]:51067 Closing
+[Fri Mar  6 01:08:53 2026] [::1]:51068 Accepted
+[Fri Mar  6 01:08:53 2026] [::1]:51068 [200]: GET /api.php?action=today
+[Fri Mar  6 01:08:53 2026] [::1]:51068 Closing
+[Fri Mar  6 01:08:53 2026] [::1]:51069 Accepted
+[Fri Mar  6 01:08:53 2026] PHP Warning:  Undefined array key "completed" in /Users/sergiuman/Desktop/aiwideweb-project/api.php on line 274
+[Fri Mar  6 01:08:53 2026] [::1]:51069 [200]: POST /api.php?action=save-entry
+[Fri Mar  6 01:08:53 2026] [::1]:51069 Closing

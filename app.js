@@ -1,5 +1,5 @@
 // State
-const state = { user: null, entries: [], today: null, planned: [], timer: 0, timerOn: false, timerInt: null };
+const state = { user: null, entries: [], today: null, planned: [], timer: 0, timerOn: false, timerInt: null, editingDate: null };
 
 // Data
 const HABITS = [
@@ -46,14 +46,24 @@ async function api(action, method = 'GET', data = null) {
   return res.json();
 }
 
+const getLogicalDate = () => {
+  const d = new Date();
+  d.setHours(d.getHours() - 4);
+  return d.toISOString().split('T')[0];
+};
 const fmtTime = s => { const m = Math.floor(s / 60), sec = s % 60; return m + ':' + String(sec).padStart(2, '0'); };
-const fmtDate = d => new Date(d).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
+const fmtDate = d => new Date(d + 'T12:00:00Z').toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' });
 const getGreeting = () => { const h = new Date().getHours(); return h < 12 ? 'Good morning' : h < 17 ? 'Good afternoon' : 'Good evening'; };
 const getMoodEmoji = m => (MOODS.find(x => x.id === m) || {}).emoji || '😐';
 const scoreColor = s => s >= 7 ? '#10b981' : s >= 5 ? '#f59e0b' : '#ef4444';
 
 // Init
 async function init() {
+  // Theme init
+  if (localStorage.getItem('theme') === 'light') {
+    document.body.classList.add('light-theme');
+  }
+
   try {
     const auth = await api('me');
     if (!auth.authenticated) {
@@ -101,7 +111,7 @@ function setupUI() {
       clearInterval(state.timerInt);
     }
   };
-  
+
   $('timerReset').onclick = () => {
     state.timerOn = false;
     state.timer = 0;
@@ -110,7 +120,7 @@ function setupUI() {
     $('timerPlay').classList.remove('active');
     $('timerDisplay').textContent = '0:00';
   };
-  
+
   $('timerSelect').onchange = e => $('timerLabel').textContent = e.target.value;
 
   // Voice Recording
@@ -118,22 +128,22 @@ function setupUI() {
   let audioChunks = [];
   let recTimerInt = null;
   let recSeconds = 0;
-  
+
   $('micBtn').onclick = async () => {
     if (mediaRecorder && mediaRecorder.state === 'recording') {
       mediaRecorder.stop();
       return;
     }
-    
+
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       mediaRecorder = new MediaRecorder(stream);
       audioChunks = [];
-      
+
       mediaRecorder.ondataavailable = e => {
         if (e.data.size > 0) audioChunks.push(e.data);
       };
-      
+
       mediaRecorder.onstop = async () => {
         stream.getTracks().forEach(track => track.stop());
         $('micBtn').classList.remove('recording');
@@ -142,11 +152,11 @@ function setupUI() {
         $('recTimer').style.display = 'none';
         $('aiProcessing').style.display = 'block';
         $('voiceRecorder').style.display = 'none';
-        
+
         const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
         const formData = new FormData();
         formData.append('audio', audioBlob, 'journal.webm');
-        
+
         try {
           const res = await fetch('api.php?action=transcribe', {
             method: 'POST',
@@ -154,19 +164,22 @@ function setupUI() {
           });
           const data = await res.json();
           $('aiProcessing').style.display = 'none';
-          
+
           if (data.success) {
             $('aiResult').style.display = 'block';
             $('transcriptText').textContent = '"' + data.transcript + '"';
-            
+
             state.tempAiData = data.extracted;
-            
+
             let html = `<strong>Energy:</strong> ${data.extracted.energy}/10 &bull; <strong>Mood:</strong> ${data.extracted.mood}<br>`;
             html += `<strong>Sleep:</strong> ${data.extracted.sleep}/10 &bull; <strong>Food:</strong> ${data.extracted.food}/10<br><br>`;
             html += `<strong>Summary:</strong> ${data.extracted.reflection_practical || 'None'}<br>`;
-            html += `<strong>Wins:</strong> ${data.extracted.wins || 'None'}`;
+            html += `<strong>Wins:</strong> ${data.extracted.wins || 'None'}<br>`;
+            if (data.extracted.habits && data.extracted.habits.length > 0) {
+              html += `<strong>Habits Logged:</strong> ${data.extracted.habits.length}`;
+            }
             $('extractedDataPre').innerHTML = html;
-            
+
           } else {
             alert('Error: ' + data.error);
             $('voiceRecorder').style.display = 'block';
@@ -179,11 +192,11 @@ function setupUI() {
           $('recStatus').textContent = 'Tap to start recording';
         }
       };
-      
+
       mediaRecorder.start();
       $('micBtn').classList.add('recording');
       $('recStatus').textContent = 'Recording... Tap to stop';
-      
+
       recSeconds = 0;
       $('recTimer').style.display = 'block';
       $('recTimer').textContent = '0:00';
@@ -194,23 +207,26 @@ function setupUI() {
           mediaRecorder.stop();
         }
       }, 1000);
-      
+
     } catch (err) {
       alert('Microphone access denied or not available.');
     }
   };
-  
+
   $('saveAiData').onclick = async () => {
     $('saveAiData').textContent = 'Saving...';
     // Merge into state.today
     Object.assign(state.today, state.tempAiData);
+    if (state.tempAiData.habits && Array.isArray(state.tempAiData.habits)) {
+      state.today.habits = state.tempAiData.habits; // Explicitly assign the array
+    }
     await saveEntry();
     $('saveAiData').textContent = 'Looks Good, Save It!';
     $('aiResult').style.display = 'none';
     $('voiceRecorder').style.display = 'block';
     $('recStatus').textContent = 'Saved! Tap to record again';
   };
-  
+
   $('discardAiData').onclick = () => {
     state.tempAiData = null;
     $('aiResult').style.display = 'none';
@@ -229,12 +245,12 @@ function setupUI() {
   // Plan categories
   const cats = {};
   HABITS.forEach(h => { if (!cats[h.cat]) cats[h.cat] = []; cats[h.cat].push(h); });
-  $('planCategories').innerHTML = Object.entries(cats).map(([c, hs]) => 
+  $('planCategories').innerHTML = Object.entries(cats).map(([c, hs]) =>
     '<div class="category"><h4>' + CATS[c] + '</h4><div class="list">' +
     hs.map(h => '<button data-id="' + h.id + '"><span class="icon">' + h.icon + '</span><span class="name">' + h.name + '</span><span class="check">✓</span></button>').join('') +
     '</div></div>'
   ).join('');
-  
+
   $$('#planCategories button').forEach(b => {
     b.onclick = () => {
       const i = state.planned.indexOf(b.dataset.id);
@@ -264,15 +280,29 @@ function setupUI() {
     }, 1000);
   };
 
+  // Theme Toggle
+  if ($('themeToggle')) {
+    $('themeToggle').onclick = () => {
+      document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      $('themeToggle').textContent = isLight ? '🌙 Switch to Dark Mode' : '☀️ Switch to Light Mode';
+    };
+    // Set initial text
+    if (localStorage.getItem('theme') === 'light') {
+      $('themeToggle').textContent = '🌙 Switch to Dark Mode';
+    }
+  }
+
   // Password
   $('changePass').onclick = async () => {
     $('passError').style.display = 'none';
     $('passSuccess').style.display = 'none';
-    
+
     const cur = $('curPass').value;
     const nw = $('newPass').value;
     const con = $('conPass').value;
-    
+
     if (nw !== con) {
       $('passError').textContent = 'Passwords do not match';
       $('passError').style.display = 'block';
@@ -283,9 +313,9 @@ function setupUI() {
       $('passError').style.display = 'block';
       return;
     }
-    
+
     const res = await api('change-password', 'POST', { currentPassword: cur, newPassword: nw });
-    
+
     if (res.success) {
       $('passSuccess').textContent = 'Password changed!';
       $('passSuccess').style.display = 'block';
@@ -305,19 +335,19 @@ function setupUI() {
 
 async function saveEntry() {
   state.today.completed = true;
-  state.today.date = new Date().toISOString().split('T')[0];
-  
+  state.today.date = state.editingDate || state.today.date || getLogicalDate();
+
   const res = await api('save-entry', 'POST', state.today);
   state.today = res;
   state.entries = await api('entries');
-  
+
   const auth = await api('me');
   state.user = auth.user;
-  
+
   renderDashboard();
   renderHistory();
   renderSettings();
-  
+
   $('trackNote').textContent = '✓ Saved!';
   $('saveTrack').textContent = '✓ Saved';
 }
@@ -334,7 +364,7 @@ function render() {
 function renderDashboard() {
   $('greeting').textContent = getGreeting() + ', ' + state.user.username;
   $('dateText').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' });
-  
+
   if (state.user.streak > 0) {
     $('streakBadge').style.display = 'block';
     $('streakBadge').textContent = '🔥 ' + state.user.streak + ' day' + (state.user.streak > 1 ? 's' : '');
@@ -361,9 +391,10 @@ function renderDashboard() {
   }
 
   let week = '';
-  const todayStr = new Date().toISOString().split('T')[0];
+  const todayStr = getLogicalDate();
   for (let i = 0; i < 7; i++) {
     const d = new Date();
+    d.setHours(d.getHours() - 4);
     d.setDate(d.getDate() - (6 - i));
     const ds = d.toISOString().split('T')[0];
     const e = state.entries.find(x => x.date === ds);
@@ -415,34 +446,35 @@ function renderPlanSummary() {
 
 function renderHistory() {
   $('entryCount').textContent = state.entries.length + ' entries';
-  
+
   if (state.entries.length === 0) {
     $('historyList').innerHTML = '<div class="empty"><span class="icon">📝</span><p>Start tracking to see history</p></div>';
     return;
   }
-  
+
   $('historyList').innerHTML = state.entries.map((e, i) => {
     const avg = ((e.sleep || 0) + (e.energy || 0)) / 2;
     const habits = e.habits || [];
     return '<div class="history-card">' +
       '<button class="top" onclick="toggleHistory(' + i + ')">' +
-        '<div class="left">' +
-          '<span class="score" style="background:' + scoreColor(avg) + '">' + avg.toFixed(1) + '</span>' +
-          '<div><div class="date">' + fmtDate(e.date) + '</div><div class="meta">' + habits.length + ' habits • ' + (e.mood || 'no mood') + '</div></div>' +
-        '</div>' +
-        '<span class="arrow">▶</span>' +
+      '<div class="left">' +
+      '<span class="score" style="background:' + scoreColor(avg) + '">' + avg.toFixed(1) + '</span>' +
+      '<div><div class="date">' + fmtDate(e.date) + '</div><div class="meta">' + habits.length + ' habits • ' + (e.mood || 'no mood') + '</div></div>' +
+      '</div>' +
+      '<span class="arrow">▶</span>' +
       '</button>' +
       '<div id="hd' + i + '" class="details">' +
-        '<div class="row"><span>😴 Sleep:</span><span>' + e.sleep + '/10</span></div>' +
-        '<div class="row"><span>⚡ Energy:</span><span>' + e.energy + '/10</span></div>' +
-        '<div class="row"><span>🍽️ Nutrition:</span><span>' + e.food + '/10</span></div>' +
-        (e.wins ? '<div class="text"><strong>🏆</strong> ' + e.wins + '</div>' : '') +
-        (e.gratitude ? '<div class="text"><strong>🙏</strong> ' + e.gratitude + '</div>' : '') +
-        (habits.length > 0 ? '<div class="text"><strong>✓ Habits:</strong><div class="habit-list">' +
-          habits.map(id => { const h = HABITS.find(x => x.id === id); return h ? '<span class="habit-tag">' + h.icon + ' ' + h.name + '</span>' : ''; }).join('') +
-          '</div></div>' : '') +
+      '<div class="row"><span>😴 Sleep:</span><span>' + e.sleep + '/10</span></div>' +
+      '<div class="row"><span>⚡ Energy:</span><span>' + e.energy + '/10</span></div>' +
+      '<div class="row"><span>🍽️ Nutrition:</span><span>' + e.food + '/10</span></div>' +
+      (e.wins ? '<div class="text"><strong>🏆</strong> ' + e.wins + '</div>' : '') +
+      (e.gratitude ? '<div class="text"><strong>🙏</strong> ' + e.gratitude + '</div>' : '') +
+      (habits.length > 0 ? '<div class="text"><strong>✓ Habits:</strong><div class="habit-list">' +
+        habits.map(id => { const h = HABITS.find(x => x.id === id); return h ? '<span class="habit-tag">' + h.icon + ' ' + h.name + '</span>' : ''; }).join('') +
+        '</div></div>' : '') +
+      '<button class="btn secondary" style="margin-top:16px; padding:12px; font-size:13px;" onclick="editEntry(' + i + ')">✏️ Edit This Entry</button>' +
       '</div>' +
-    '</div>';
+      '</div>';
   }).join('');
 }
 
@@ -452,8 +484,23 @@ function renderSettings() {
   $('setEntries').textContent = state.entries.length;
 }
 
-window.toggleHistory = function(i) {
+window.toggleHistory = function (i) {
   $('hd' + i).classList.toggle('open');
+};
+
+window.editEntry = function (i) {
+  state.today = JSON.parse(JSON.stringify(state.entries[i]));
+  state.editingDate = state.today.date;
+
+  if ($('trackNote')) $('trackNote').textContent = 'Editing entry for ' + fmtDate(state.today.date);
+
+  $$('nav button').forEach(x => x.classList.remove('active'));
+  $$('nav button[data-view="track"]')[0].classList.add('active');
+  $$('.view').forEach(v => v.classList.remove('active'));
+  $('track').classList.add('active');
+
+  renderTrack();
+  renderReflect();
 };
 
 // Start

@@ -220,7 +220,7 @@ switch ($action) {
     
     case 'today':
         $userId = requireAuth();
-        $today = date('Y-m-d');
+        $today = date('Y-m-d', strtotime('-4 hours'));
         
         $stmt = $db->prepare("SELECT * FROM entries WHERE user_id = ? AND date = ?");
         $stmt->execute([$userId, $today]);
@@ -243,7 +243,7 @@ switch ($action) {
     case 'save-entry':
         $userId = requireAuth();
         
-        $date = $input['date'] ?? date('Y-m-d');
+        $date = $input['date'] ?? date('Y-m-d', strtotime('-4 hours'));
         $habits = json_encode($input['habits'] ?? []);
         
         // Check if exists
@@ -271,7 +271,7 @@ switch ($action) {
                 $input['wins'] ?? '',
                 $input['challenges'] ?? '',
                 $input['gratitude'] ?? '',
-                $input['completed'] ? 1 : 0,
+                ($input['completed'] ?? false) ? 1 : 0,
                 $userId,
                 $date
             ]);
@@ -296,7 +296,7 @@ switch ($action) {
                 $input['wins'] ?? '',
                 $input['challenges'] ?? '',
                 $input['gratitude'] ?? '',
-                $input['completed'] ? 1 : 0
+                ($input['completed'] ?? false) ? 1 : 0
             ]);
         }
         
@@ -363,6 +363,7 @@ Fields:
 - `food` (1-10 integer representing how healthy they ate, or 5 if not mentioned)
 - `movement` (0-4 integer: 0=Sedentary, 1=Light, 2=Moderate, 3=Active, 4=Intense)
 - `decisions` (0-3 integer: 0=Light, 1=Normal, 2=Heavy, 3=Exhausting)
+- `habits` (array of strings, output ONLY IDs matching habits the user mentions completing: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']. E.g., if they meditated and read, output [\"h4\", \"h3\"]. Output an empty array if none matched)
 - `reflection_practical` (string, a short summary of what they actually did)
 - `reflection_emotional` (string, a short summary of how they felt)
 - `reflection_identity` (string, a short note on who they were today)

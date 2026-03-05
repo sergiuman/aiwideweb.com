@@ -137,6 +137,10 @@ if (!isset($_SESSION['user_id'])) {
           <div class="settings-row"><span>Total entries</span><span id="setEntries">0</span></div>
         </div>
         <div class="settings-section">
+          <h3>Appearance</h3>
+          <button id="themeToggle" class="btn secondary">☀️ Switch to Light Mode</button>
+        </div>
+        <div class="settings-section">
           <h3>Change Password</h3>
           <div id="passError" class="error"></div>
           <div id="passSuccess" class="success"></div>
