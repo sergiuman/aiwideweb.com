@@ -1,1 +1,40 @@
-zsh: command not found: php
+[Wed Mar  4 23:14:25 2026] PHP 8.5.3 Development Server (http://localhost:8000) started
+[Wed Mar  4 23:14:32 2026] [::1]:54171 Accepted
+[Wed Mar  4 23:14:32 2026] [::1]:54171 [200]: GET /
+[Wed Mar  4 23:14:32 2026] [::1]:54171 Closing
+[Wed Mar  4 23:26:54 2026] [::1]:54300 Accepted
+[Wed Mar  4 23:26:54 2026] [::1]:54300 [200]: GET /
+[Wed Mar  4 23:26:54 2026] [::1]:54300 Closing
+[Wed Mar  4 23:26:55 2026] [::1]:54301 Accepted
+[Wed Mar  4 23:26:55 2026] [::1]:54301 [200]: GET /styles.css
+[Wed Mar  4 23:26:55 2026] [::1]:54301 Closing
+[Wed Mar  4 23:26:55 2026] [::1]:54302 Accepted
+[Wed Mar  4 23:26:55 2026] [::1]:54302 [200]: GET /api.php?action=me
+[Wed Mar  4 23:26:55 2026] [::1]:54302 Closing
+[Wed Mar  4 23:26:55 2026] [::1]:54303 Accepted
+[Wed Mar  4 23:26:55 2026] [::1]:54303 [200]: GET /favicon.ico
+[Wed Mar  4 23:26:55 2026] [::1]:54303 Closing
+[Wed Mar  4 23:27:07 2026] [::1]:54304 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54304 [200]: POST /api.php?action=login
+[Wed Mar  4 23:27:08 2026] [::1]:54304 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54305 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54305 [200]: GET /app.php
+[Wed Mar  4 23:27:08 2026] [::1]:54305 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54306 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54306 [200]: GET /styles.css
+[Wed Mar  4 23:27:08 2026] [::1]:54306 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54307 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54307 [200]: GET /app.js
+[Wed Mar  4 23:27:08 2026] [::1]:54307 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54308 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54308 [200]: GET /api.php?action=me
+[Wed Mar  4 23:27:08 2026] [::1]:54308 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54309 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54309 [200]: GET /api.php?action=today
+[Wed Mar  4 23:27:08 2026] [::1]:54309 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54310 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54310 [200]: GET /api.php?action=entries
+[Wed Mar  4 23:27:08 2026] [::1]:54310 Closing
+[Wed Mar  4 23:27:08 2026] [::1]:54311 Accepted
+[Wed Mar  4 23:27:08 2026] [::1]:54311 [200]: GET /api.php?action=planned
+[Wed Mar  4 23:27:08 2026] [::1]:54311 Closing
