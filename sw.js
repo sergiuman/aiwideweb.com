@@ -43,7 +43,33 @@ self.addEventListener('fetch', e => {
 
     e.respondWith(
         caches.match(e.request).then(cachedResponse => {
-            return cachedResponse || fetch(e.request);
+            if (cachedResponse) {
+                return cachedResponse;
+            }
+            return fetch(e.request).then(response => {
+                // Safari workaround for "Response served by service worker has redirections"
+                if (response.redirected) {
+                    return cleanResponse(response);
+                }
+                return response;
+            });
         })
     );
 });
+
+function cleanResponse(response) {
+    const clonedResponse = response.clone();
+
+    // Create a new response with the same body and headers, but not marked as redirected
+    const bodyPromise = 'body' in clonedResponse ?
+        Promise.resolve(clonedResponse.body) :
+        clonedResponse.blob();
+
+    return bodyPromise.then((body) => {
+        return new Response(body, {
+            headers: clonedResponse.headers,
+            status: clonedResponse.status,
+            statusText: clonedResponse.statusText,
+        });
+    });
+}
