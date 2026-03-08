@@ -354,22 +354,23 @@ switch ($action) {
         }
         
         // 2. Extract Data with GPT-4o-mini
-        $prompt = "You are an AI assistant for a daily journaling app. Read the user's transcript of their day.
-Extract the following JSON structure exactly. Do not output anything else.
-Fields:
-- `sleep` (1-10 integer based on their sleep quality mentioned, or 5 if not mentioned)
-- `energy` (1-10 integer based on their energy level, or 5 if not mentioned)
-- `mood` (string, one of: 'great', 'good', 'neutral', 'low', 'struggling')
-- `food` (1-10 integer representing how healthy they ate, or 5 if not mentioned)
-- `movement` (0-4 integer: 0=Sedentary, 1=Light, 2=Moderate, 3=Active, 4=Intense)
+        $prompt = "You are an AI data extractor for a daily journaling app. Read the user's transcript of their day.
+Analyze the sentiment and context to accurately infer scores even if they don't explicitly say numbers.
+Extract the following JSON structure exactly. Do not wrap in markdown tags like ```json.
+Fields MUST be present:
+- `sleep` (1-10 integer. e.g. 'slept terribly'=2, 'slept okay'=6, 'slept great'=9. Output 5 if entirely unmentioned)
+- `energy` (1-10 integer. e.g. 'exhausted'=2, 'tired'=4, 'normal'=5, 'energized'=8, 'unstoppable'=10)
+- `mood` (string exactly one of: 'great', 'good', 'neutral', 'low', 'struggling'. Infer from tone.)
+- `food` (1-10 integer. e.g. 'ate junk'=2, 'ate horribly'=3, 'ate okay'=5, 'ate healthy'=8, 'perfect diet'=10)
+- `movement` (0-4 integer: 0=Sedentary, 1=Light, 2=Moderate, 3=Active, 4=Intense. e.g. 'walked a bit'=1, 'went to gym'=3)
 - `decisions` (0-3 integer: 0=Light, 1=Normal, 2=Heavy, 3=Exhausting)
-- `habits` (array of strings, output ONLY IDs matching habits the user mentions completing: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']. E.g., if they meditated and read, output [\"h4\", \"h3\"]. Output an empty array if none matched)
-- `reflection_practical` (string, a short summary of what they actually did)
-- `reflection_emotional` (string, a short summary of how they felt)
-- `reflection_identity` (string, a short note on who they were today)
-- `wins` (string, their best achievement of the day)
-- `challenges` (string, any main challenge)
-- `gratitude` (string, what they mentioned being grateful for, or empty)
+- `habits` (array of strings. Output ONLY IDs matching habits the user mentions completing: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6', 'h7', 'h8', 'h9', 'h10', 'h11', 'h12']. E.g., if they meditated and read, output [\"h4\", \"h3\"]. Empty array if none)
+- `reflection_practical` (string, short summary of what they actually did)
+- `reflection_emotional` (string, short summary of how they felt)
+- `reflection_identity` (string, short note on who they were today)
+- `wins` (string, their best achievement, or empty)
+- `challenges` (string, any main challenge, or empty)
+- `gratitude` (string, what they are grateful for, or empty)
 
 Transcript: \"$transcript\"";
 

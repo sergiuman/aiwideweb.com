@@ -349,7 +349,6 @@ async function saveEntry() {
   renderSettings();
 
   $('trackNote').textContent = '✓ Saved!';
-  $('saveTrack').textContent = '✓ Saved';
 }
 
 function render() {
