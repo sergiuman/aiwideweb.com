@@ -178,6 +178,9 @@ function setupUI() {
             if (data.extracted.habits && data.extracted.habits.length > 0) {
               html += `<strong>Habits Logged:</strong> ${data.extracted.habits.length}`;
             }
+            if (data.extracted.planned_habits && data.extracted.planned_habits.length > 0) {
+              html += `<br><strong>Plans Tomorrow:</strong> ${data.extracted.planned_habits.length}`;
+            }
             $('extractedDataPre').innerHTML = html;
 
           } else {
@@ -218,10 +221,19 @@ function setupUI() {
     // Merge into state.today
     Object.assign(state.today, state.tempAiData);
     if (state.tempAiData.habits && Array.isArray(state.tempAiData.habits)) {
-      state.today.habits = state.tempAiData.habits; // Explicitly assign the array
+      state.today.habits = state.tempAiData.habits;
     }
-    await saveEntry();
-    $('saveAiData').textContent = 'Looks Good, Save It!';
+    
+    // Merge planned habits
+    if (state.tempAiData.planned_habits && Array.isArray(state.tempAiData.planned_habits)) {
+      state.planned = state.tempAiData.planned_habits;
+      renderPlanSummary();
+      $$('#planCategories button').forEach(b => b.classList.toggle('active', state.planned.includes(b.dataset.id)));
+    }
+
+    await saveLogAndPlan();
+    
+    $('saveAiData').textContent = 'Looks Good, Fill Log!';
     $('aiResult').style.display = 'none';
     $('voiceRecorder').style.display = 'block';
     $('recStatus').textContent = 'Saved! Tap to record again';
@@ -262,23 +274,21 @@ function setupUI() {
   });
 
   // Save buttons
-  $('saveReflect').onclick = saveEntry;
-  $('savePlan').onclick = async () => {
-    await api('planned', 'POST', { habits: state.planned });
-    renderDashboard();
-  };
+  $('saveReflect').onclick = saveLogAndPlan;
 
   // AI
-  $('aiBtn').onclick = () => {
-    $('aiBtn').textContent = '✨ Generating...';
-    $('aiBtn').disabled = true;
-    setTimeout(() => {
-      $('aiInsight').textContent = AI_INSIGHTS[Math.floor(Math.random() * AI_INSIGHTS.length)];
-      $('aiInsight').style.display = 'block';
-      $('aiBtn').textContent = '✨ Get AI Insight';
-      $('aiBtn').disabled = false;
-    }, 1000);
-  };
+  if ($('aiBtn')) {
+    $('aiBtn').onclick = () => {
+      $('aiBtn').textContent = '✨ Generating...';
+      $('aiBtn').disabled = true;
+      setTimeout(() => {
+        $('aiInsight').textContent = AI_INSIGHTS[Math.floor(Math.random() * AI_INSIGHTS.length)];
+        $('aiInsight').style.display = 'block';
+        $('aiBtn').textContent = '✨ Get AI Insight';
+        $('aiBtn').disabled = false;
+      }, 1000);
+    };
+  }
 
   // Theme Toggle
   if ($('themeToggle')) {
@@ -333,13 +343,15 @@ function setupUI() {
   };
 }
 
-async function saveEntry() {
+async function saveLogAndPlan() {
   state.today.completed = true;
   state.today.date = state.editingDate || state.today.date || getLogicalDate();
 
   const res = await api('save-entry', 'POST', state.today);
   state.today = res;
   state.entries = await api('entries');
+  
+  await api('planned', 'POST', { habits: state.planned });
 
   const auth = await api('me');
   state.user = auth.user;
@@ -347,15 +359,15 @@ async function saveEntry() {
   renderDashboard();
   renderHistory();
   renderSettings();
+  renderLog();
 
-  $('trackNote').textContent = '✓ Saved!';
+  $('trackNote').textContent = '✓ Saved Log and Plan!';
+  setTimeout(() => { if($('trackNote')) $('trackNote').textContent = ''; }, 3000);
 }
 
 function render() {
   renderDashboard();
-  renderTrack();
-  renderReflect();
-  renderPlan();
+  renderLog();
   renderHistory();
   renderSettings();
 }
@@ -407,26 +419,21 @@ function renderDashboard() {
   $('weekGrid').innerHTML = week;
 }
 
-function renderTrack() {
+function renderLog() {
   const t = state.today || {};
   if (t.completed) {
-    if ($('recStatus')) $('recStatus').textContent = 'Already tracked today! Tap to update via voice.';
+    if ($('recStatus')) $('recStatus').textContent = 'Already logged today! Tap to update via voice.';
   } else {
     if ($('recStatus')) $('recStatus').textContent = 'Tap to start recording';
   }
-}
 
-function renderReflect() {
-  const t = state.today || {};
   $('rPractical').value = t.reflection_practical || '';
   $('rEmotional').value = t.reflection_emotional || '';
   $('rIdentity').value = t.reflection_identity || '';
   $('rWins').value = t.wins || '';
   $('rChallenges').value = t.challenges || '';
   $('rGratitude').value = t.gratitude || '';
-}
 
-function renderPlan() {
   $$('#planCategories button').forEach(b => b.classList.toggle('active', state.planned.includes(b.dataset.id)));
   renderPlanSummary();
 }
@@ -494,12 +501,11 @@ window.editEntry = function (i) {
   if ($('trackNote')) $('trackNote').textContent = 'Editing entry for ' + fmtDate(state.today.date);
 
   $$('nav button').forEach(x => x.classList.remove('active'));
-  $$('nav button[data-view="track"]')[0].classList.add('active');
+  $$('nav button[data-view="log"]')[0].classList.add('active');
   $$('.view').forEach(v => v.classList.remove('active'));
-  $('track').classList.add('active');
+  $('log').classList.add('active');
 
-  renderTrack();
-  renderReflect();
+  renderLog();
 };
 
 // Start

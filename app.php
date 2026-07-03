@@ -57,11 +57,11 @@
         <div class="card wisdom"><p>"Every action you take is a vote for the type of person you wish to become."</p><span>— Atomic Habits</span></div>
       </div>
 
-      <!-- Track -->
-      <div id="track" class="view">
+      <!-- Daily Log -->
+      <div id="log" class="view">
         <div class="header">
-          <h2>Voice Journal</h2>
-          <p>Record a 5-minute brain dump of your day</p>
+          <h2>Daily Voice Log</h2>
+          <p>Record a 5-minute brain dump of your day, reflections, and tomorrow's plan</p>
         </div>
         
         <div id="voiceRecorder" class="voice-recorder">
@@ -82,36 +82,31 @@
           <h3>Extracted Data:</h3>
           <div id="extractedDataPre" class="extracted-data"></div>
           
-          <button id="saveAiData" class="btn primary" style="margin-bottom: 8px;">Looks Good, Save It!</button>
+          <button id="saveAiData" class="btn primary" style="margin-bottom: 8px;">Looks Good, Fill Log!</button>
           <button id="discardAiData" class="btn secondary">Discard</button>
         </div>
         <p id="trackNote" class="note"></p>
-      </div>
 
-      <!-- Reflect -->
-      <div id="reflect" class="view">
-        <div class="header"><h2>Evening Reflection</h2><p>Three dimensions of your day</p></div>
-        <div class="reflect-card"><div class="top"><span class="icon">🎯</span><h3>Practical</h3></div><p>What actually happened today?</p><textarea id="rPractical" rows="3" placeholder="Today I accomplished..."></textarea></div>
-        <div class="reflect-card"><div class="top"><span class="icon">💜</span><h3>Emotional</h3></div><p>How did you feel?</p><textarea id="rEmotional" rows="3" placeholder="I felt..."></textarea></div>
-        <div class="reflect-card"><div class="top"><span class="icon">🪞</span><h3>Identity</h3></div><p>Who were you today?</p><textarea id="rIdentity" rows="3" placeholder="Today I was someone who..."></textarea></div>
+        <hr style="margin: 24px 0; border: none; border-top: 1px solid rgba(255,255,255,0.1);">
+
+        <h3>Manual Adjustments</h3>
+        <p style="color:rgba(255,255,255,0.6); font-size:14px; margin-bottom:16px;">The AI uses your voice to fill these out automatically.</p>
+
+        <!-- Merged Forms Below -->
+        <div class="reflect-card"><div class="top"><span class="icon">🎯</span><h3>Practical Summary</h3></div><textarea id="rPractical" rows="2"></textarea></div>
+        <div class="reflect-card"><div class="top"><span class="icon">💜</span><h3>Emotional State</h3></div><textarea id="rEmotional" rows="2"></textarea></div>
+        <div class="reflect-card"><div class="top"><span class="icon">🪞</span><h3>Identity Check</h3></div><textarea id="rIdentity" rows="2"></textarea></div>
         <div class="captures">
-          <div><label>🏆 Today's win</label><input type="text" id="rWins" placeholder="One thing I'm proud of..."></div>
-          <div><label>🌊 Challenge</label><input type="text" id="rChallenges" placeholder="Something hard..."></div>
-          <div><label>🙏 Gratitude</label><input type="text" id="rGratitude" placeholder="I'm grateful for..."></div>
+          <div><label>🏆 Today's win</label><input type="text" id="rWins"></div>
+          <div><label>🌊 Challenge</label><input type="text" id="rChallenges"></div>
+          <div><label>🙏 Gratitude</label><input type="text" id="rGratitude"></div>
         </div>
-        <button id="aiBtn" class="ai-btn">✨ Get AI Insight</button>
-        <div id="aiInsight" class="ai-insight"></div>
-        <button id="saveReflect" class="btn primary">Save Reflection</button>
-      </div>
 
-      <!-- Plan -->
-      <div id="plan" class="view">
-        <div class="header"><h2>Plan Tomorrow</h2><p>Choose 3-5 habits</p></div>
-        <div class="tip"><span class="icon">💡</span><div><strong>Habit Stacking</strong><p>"After I [CURRENT], I will [NEW]"</p></div></div>
+        <div class="header" style="margin-top: 32px;"><h2>Plan Tomorrow</h2></div>
         <div id="planCategories"></div>
-        <div class="plan-summary"><h3>Tomorrow (<span id="planCount">0</span>)</h3><div id="selectedList" class="list"></div></div>
-        <div class="reminder"><strong>Never miss twice.</strong> If you slip up today, getting back tomorrow is what matters.</div>
-        <button id="savePlan" class="btn primary">Save Plan</button>
+        <div class="plan-summary" style="margin-top: 12px; margin-bottom: 24px;"><h3>Tomorrow (<span id="planCount">0</span>)</h3><div id="selectedList" class="list"></div></div>
+        
+        <button id="saveReflect" class="btn primary">Save Log & Plan</button>
       </div>
 
       <!-- History -->
@@ -151,9 +146,7 @@
     <!-- Nav -->
     <nav>
       <button class="active" data-view="dashboard"><span class="icon">📊</span><span class="text">Today</span></button>
-      <button data-view="track"><span class="icon">✓</span><span class="text">Track</span></button>
-      <button data-view="reflect"><span class="icon">💭</span><span class="text">Reflect</span></button>
-      <button data-view="plan"><span class="icon">🎯</span><span class="text">Plan</span></button>
+      <button data-view="log"><span class="icon">🎙️</span><span class="text">Log</span></button>
       <button data-view="history"><span class="icon">📅</span><span class="text">History</span></button>
       <button data-view="settings"><span class="icon">⚙️</span><span class="text">Settings</span></button>
     </nav>
